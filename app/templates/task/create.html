@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Create Task
+{% endblock %}
+
+{% block content_title %}
+    Create new task
+{% endblock %}
+
+{% block content %}
+
+    {% with messages = get_flashed_messages(with_categories=True) %}
+        {% for category, message in messages %}
+            <div class="{{ category }}">{{ message }}</div>
+        {% endfor %}
+    {% endwith %}
+
+    <form action="" method="post">
+        {{ form.csrf_token() }}
+        <p>
+            {{ form.lower_limit.label() }}
+            {{ form.lower_limit() }}
+            {% if form.lower_limit.errors %}
+                {% for error in form.lower_limit.errors %}
+                    {{ error }}
+                {% endfor %}
+            {% endif %}
+        </p>
+        <p>
+            {{ form.upper_limit.label() }}
+            {{ form.upper_limit() }}
+            {% if form.upper_limit.errors %}
+                {% for error in form.upper_limit.errors %}
+                    {{ error }}
+                {% endfor %}
+            {% endif %}
+        </p>
+        <p>
+            {{ form.users.label() }}
+            {{ form.users() }}
+        </p>
+        <p>
+            {{ form.create_submit() }}
+            {{ form.back_submit(formnovalidate=True) }}
+        </p>
+    </form>
+
+{% endblock %}

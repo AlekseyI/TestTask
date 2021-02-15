@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Start Page
+{% endblock %}
+
+{% block content_title %}
+    Hello Anonym User
+{% endblock %}
+
+{% block content %}
+    <a href="{{ url_for('login') }}">Login</a> to you tasks or <a href="{{ url_for('registration') }}">Registration</a>
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends 'task/base_top.html' %}
+
+{% block title %}
+    List Tasks
+{% endblock %}
+
+{% block content_title %}
+    List Tasks
+{% endblock %}
+
+{% block content %}
+    {% for task in tasks %}
+        <p>
+            <a href="{{ url_for('tasks.preview', id=task.id) }}">Taks_{{ task.id }}</a>
+        </p>
+    {% endfor %}
+{% endblock %}

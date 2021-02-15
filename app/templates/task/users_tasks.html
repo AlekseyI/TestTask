@@ -1,0 +1,19 @@
+{% extends 'task/base_top.html' %}
+
+{% block title %}
+    List Tasks
+{% endblock %}
+
+{% block content_title %}
+    List Users with count their tasks
+{% endblock %}
+
+{% block content %}
+    {% for user_task in users_and_tasks %}
+        <p>
+            <a href="{{ url_for('tasks.view_user_tasks', name=user_task[0]) }}">
+                {{ user_task[0] }} {% if user_task[1] %} (Reviewer) {% endif %} count {{ user_task[2] }} tasks
+            </a>
+        </p>
+    {% endfor %}
+{% endblock %}

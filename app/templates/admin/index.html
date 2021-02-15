@@ -1,0 +1,15 @@
+{% extends 'admin/base.html' %}
+
+{% block access_control %}
+    <div class="btn pull-right">
+        <a class="navbar" href="{{ url_for('admin.logout') }}">Logout, {{ current_user.username }}</a>
+    </div>
+
+    <div class="btn pull-right">
+        <a class="navbar" href="{{ url_for('index') }}">Go to site</a>
+    </div>
+{% endblock %}
+
+{% block body %}
+    <h1>Hello {{ current_user.username }}</h1>
+{% endblock %}

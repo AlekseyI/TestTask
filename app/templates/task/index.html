@@ -1,0 +1,21 @@
+{% extends 'task/base_top.html' %}
+
+{% block title %}
+    Tasks
+{% endblock %}
+
+{% block content_title %}
+    {% if current_user.superuser or current_user.can_review_tasks and username != current_user.username %}
+        {{ username }} tasks below
+    {% else %}
+        Hello {{ username }}, you task below
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    {% for task in tasks %}
+        <p>
+            <a href="{{ url_for('tasks.preview', id=task.id) }}">Taks_{{ task.id }}</a>
+        </p>
+    {% endfor %}
+{% endblock %}
