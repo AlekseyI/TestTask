@@ -1,4 +1,4 @@
-**Create file .env in root dir task**
+**Create file .env in root dir**
 
 **Example content .env**
 
