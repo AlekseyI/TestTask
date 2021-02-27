@@ -27,13 +27,20 @@ class AdminHomeView(AdminPermissions, AdminIndexView):
 
 
 class TaskAdminView(AdminPermissions, sqla.ModelView):
-    form_excluded_columns = ['created_on', 'updated_on']
+    form_excluded_columns = ['task_results', 'created_on', 'updated_on']
 
 
 class UserAdminView(AdminPermissions, sqla.ModelView):
-    form_excluded_columns = ['created_on', 'updated_on']
+    form_excluded_columns = ['tasks_results', 'created_on', 'updated_on']
     column_exclude_list = ['password']
 
     def on_model_change(self, form, model, is_created):
         model.set_password(model.password)
         return super(UserAdminView, self).on_model_change(form, model, is_created)
+
+
+class TaskResultAdminView(AdminPermissions, sqla.ModelView):
+    column_list = ['id', 'params', 'result', 'task_id', 'user_id', 'created_on', 'updated_on']
+    column_exclude_list = ['task_id', 'user_id']
+    can_create = False
+    can_edit = False

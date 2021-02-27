@@ -1,4 +1,5 @@
 .env
+celerybeat-schedule.db
 /.__pycache__
 /venv
 /.idea

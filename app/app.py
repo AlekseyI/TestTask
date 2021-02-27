@@ -1,9 +1,9 @@
 from flask_migrate import MigrateCommand
-from .admins import UserAdminView, TaskAdminView, AdminHomeView
+from .admins import UserAdminView, TaskAdminView, TaskResultAdminView, AdminHomeView
 from .models import get_user, User
 from .views import login
 from .base import db, admin, login_manager, manager, app
-from .tasks.models import Task
+from .tasks.models import Task, TaskResult
 from .tasks.views import tasks
 from config import Config
 
@@ -23,6 +23,7 @@ def init_admin():
     admin.base_template = 'admin/index.html'
     admin.add_view(UserAdminView(User, db.session))
     admin.add_view(TaskAdminView(Task, db.session))
+    admin.add_view(TaskResultAdminView(TaskResult, db.session))
 
 
 def init_login():

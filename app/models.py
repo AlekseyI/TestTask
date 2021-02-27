@@ -20,6 +20,7 @@ class User(db.Model, UserMixin):
     superuser = sqla.Column(sqla.Boolean(), nullable=False, default=False)
     can_review_tasks = sqla.Column(sqla.Boolean(), nullable=False, default=False)
     tasks = db.relationship('Task', secondary=user_task, backref=db.backref('users', lazy='dynamic'))
+    tasks_results = db.relationship('TaskResult', backref=db.backref('user'))
     created_on = sqla.Column(sqla.DateTime(), default=datetime.utcnow)
     updated_on = sqla.Column(sqla.DateTime(), default=datetime.utcnow, onupdate=datetime.utcnow)
 
