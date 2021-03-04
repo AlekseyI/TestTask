@@ -1,0 +1,28 @@
+{% extends 'task/base_top.html' %}
+
+{% block title %}
+    Result
+{% endblock %}
+
+{% block content_title %}
+    Result Task_{{ task.id }}
+{% endblock %}
+
+{% block content %}
+    <form action="" method="post">
+        {{ form.csrf_token() }}
+        <hr />
+        {% for task_result in task.task_results %}
+            <p>
+                Result = {{ task_result.result }}
+            </p>
+            <p>
+                Time = {{ task_result.created_on }}
+            </p>
+            <hr />
+        {% endfor %}
+        <p>
+            {{ form.back_submit(formnovalidate=True) }}
+        </p>
+    </form>
+{% endblock %}

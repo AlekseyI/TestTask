@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import FloatField, SubmitField, SelectMultipleField
+from wtforms import FloatField, SubmitField, SelectMultipleField, DateTimeField
 from wtforms.validators import DataRequired
 
 
@@ -10,4 +10,8 @@ class TaskForm(FlaskForm):
     create_submit = SubmitField('Create')
     update_submit = SubmitField('Update')
     delete_submit = SubmitField('Delete')
+    back_submit = SubmitField('Back')
+
+
+class TaskResultForm(FlaskForm):
     back_submit = SubmitField('Back')

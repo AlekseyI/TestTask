@@ -1,8 +1,8 @@
 from flask import render_template, Blueprint, redirect, url_for, flash, request, session
 from flask_login import login_required, logout_user, current_user
-from sqlalchemy import func, and_, or_
+from sqlalchemy import func, and_
 from .models import Task
-from .forms import TaskForm
+from .forms import TaskForm, TaskResultForm
 from app.models import User
 from app.base import db
 
@@ -24,14 +24,11 @@ def index():
 @login_required
 def view_user_tasks(name):
     if current_user.superuser or current_user.can_review_tasks:
-        user = User.query.filter(User.username == name).filter(
-            and_(User.active.is_(True), User.superuser.is_(False),
-                 or_(current_user.superuser,
-                     and_(User.can_review_tasks.is_(False), current_user.can_review_tasks))))
-        if user.count() > 0:
-            user = user.one()
-        else:
+        user = User.query.filter(User.username == name)\
+            .filter(and_(User.active.is_(True), User.superuser.is_(False))).first()
+        if not user:
             return redirect(url_for('tasks.index'))
+
         return render_template('task/index.html',
                                username=user.username,
                                tasks=user.tasks)
@@ -43,8 +40,7 @@ def view_user_tasks(name):
 def users_tasks():
     if current_user.superuser or current_user.can_review_tasks:
         users_and_tasks = db.session.query(User.username, User.can_review_tasks, func.count(Task.id))\
-        .filter(and_(User.active.is_(True), User.superuser.is_(False),
-            or_(current_user.superuser, and_(User.can_review_tasks.is_(False), current_user.can_review_tasks))))\
+        .filter(User.active.is_(True), User.superuser.is_(False))\
             .outerjoin(User.tasks).group_by(User.id).order_by(User.username).all()
         return render_template('task/users_tasks.html', users_and_tasks=users_and_tasks)
     return redirect(url_for('tasks.index'))
@@ -66,7 +62,14 @@ def preview(id):
         else:
             return redirect(back_url)
 
-    task = Task.query.get(id)
+    if current_user.superuser or current_user.can_review_tasks:
+        task = Task.query.get(id)
+    else:
+        task = db.session.query(Task).filter(User.username == current_user.username, Task.id == id)\
+            .join(User.tasks).group_by(Task.id).first()
+
+    if not task:
+        return redirect(url_for('tasks.index'))
 
     if form.delete_submit.data:
         for user in task.users:
@@ -142,6 +145,34 @@ def preview(id):
         form.users.data = form.users.default
 
     return render_template('task/preview.html', task=task, form=form)
+
+
+@tasks.route('results/<int:id>', methods=['GET', 'POST'])
+@login_required
+def results(id):
+    form = TaskResultForm()
+
+    if 'last_url' not in session:
+        session['last_url'] = request.referrer
+
+    if form.back_submit.data:
+        back_url = session['last_url']
+        session.pop('last_url', None)
+        if back_url is None:
+            return redirect(url_for('index'))
+        else:
+            return redirect(back_url)
+
+    if current_user.superuser or current_user.can_review_tasks:
+        task = Task.query.get(id)
+    else:
+        task = db.session.query(Task).filter(User.username == current_user.username, Task.id == id)\
+            .join(User.tasks).group_by(Task.id).first()
+
+    if not task:
+        return redirect(url_for('tasks.index'))
+
+    return render_template('task/results.html', task=task, form=form)
 
 
 @tasks.route('/list_tasks/')

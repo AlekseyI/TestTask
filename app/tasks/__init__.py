@@ -1,2 +1,2 @@
-from .models import Task
+from .models import Task, TaskResult
 from .views import tasks
