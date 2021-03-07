@@ -7,7 +7,7 @@ class Task(db.Model):
     id = sqla.Column(sqla.Integer(), primary_key=True)
     lower_limit = sqla.Column(sqla.Float(), nullable=False, default=0)
     upper_limit = sqla.Column(sqla.Float(), nullable=False, default=0)
-    task_results = db.relationship('TaskResult', backref=db.backref('task'))
+    task_results = db.relationship('TaskResult', backref=db.backref('task'), lazy='dynamic', cascade='all,delete')
     created_on = sqla.Column(sqla.DateTime(), default=datetime.utcnow)
     updated_on = sqla.Column(sqla.DateTime(), default=datetime.utcnow, onupdate=datetime.utcnow)
 

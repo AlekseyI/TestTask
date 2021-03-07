@@ -9,7 +9,7 @@ from app.base import db
 @celery.task
 def action_task(id):
     user = User.query.filter(User.id == id).first()
-    count_tasks = len(user.tasks)
+    count_tasks = user.tasks.count()
     if count_tasks == 0:
         return
 

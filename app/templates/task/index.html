@@ -13,11 +13,18 @@
 {% endblock %}
 
 {% block content %}
-    {% for task in tasks %}
+    {% for task in page.items %}
         <p>
             <a href="{{ url_for('tasks.preview', id=task.id) }}">Taks_{{ task.id }}</a>
             &nbsp;
-            <a href="{{ url_for('tasks.results', id=task.id) }}">Show results({{ task.task_results|length }})</a>
+            <a href="{{ url_for('tasks.results', id=task.id) }}">Show results({{ task.task_results.count() }})</a>
         </p>
     {% endfor %}
+    {% if count_pages > 1 %}
+         <p>
+            <a href="{{ url_for('tasks.view_user_tasks', name=username, page=prev_page_index) }}">Back</a>
+                {{ page_index }} | {{ count_pages }}
+            <a href="{{ url_for('tasks.view_user_tasks', name=username, page=next_page_index) }}">Next</a>
+        </p>
+    {% endif %}
 {% endblock %}

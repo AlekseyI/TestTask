@@ -9,11 +9,18 @@
 {% endblock %}
 
 {% block content %}
-    {% for user_task in users_and_tasks %}
+    {% for user_task in page.items %}
         <p>
             <a href="{{ url_for('tasks.view_user_tasks', name=user_task[0]) }}">
                 {{ user_task[0] }} {% if user_task[1] %} (Reviewer) {% endif %} count {{ user_task[2] }} tasks
             </a>
         </p>
     {% endfor %}
+    {% if count_pages > 1 %}
+        <p>
+            <a href="{{ url_for('tasks.users_tasks', page=prev_page_index) }}">Back</a>
+            {{ page_index }} | {{ count_pages }}
+            <a href="{{ url_for('tasks.users_tasks', page=next_page_index) }}">Next</a>
+        </p>
+    {% endif %}
 {% endblock %}
