@@ -3,15 +3,10 @@ from wtforms import FloatField, SubmitField, SelectMultipleField
 from wtforms.validators import DataRequired
 
 
-class BackForm(FlaskForm):
-    back_submit = SubmitField('Back')
-
-
-class TaskForm(BackForm):
+class TaskForm(FlaskForm):
     lower_limit = FloatField('Lower Limit ', validators=[DataRequired()])
     upper_limit = FloatField('Upper Limit ', validators=[DataRequired()])
     users = SelectMultipleField('Users ', choices=[(0, None)], coerce=int, default=[0])
     create_submit = SubmitField('Create')
     update_submit = SubmitField('Update')
     delete_submit = SubmitField('Delete')
-    back_submit = SubmitField('Back')

@@ -17,7 +17,9 @@
 {% endwith %}
 
     <form action="" method="post">
-        {{ form.csrf_token() }}
+        {% if 'csrf_token' in form %}
+            {{ form.csrf_token() }}
+        {% endif %}
         <p>
             {{ form.username.label() }}
             {{ form.username() }}

@@ -2,7 +2,7 @@ from flask import render_template, Blueprint, redirect, url_for, flash, request,
 from flask_login import login_required, logout_user, current_user
 from sqlalchemy import func, and_
 from .models import Task
-from .forms import TaskForm, BackForm
+from .forms import TaskForm
 from app.models import User
 from app.base import db
 import math
@@ -30,20 +30,6 @@ def paginate(query, name_param='page', count_per_page=7):
     if not next_page_index:
         next_page_index = page_index
     return page, page_index, count_pages, prev_page_index, next_page_index
-
-
-def add_session_back():
-    if 'last_url' not in session:
-        session['last_url'] = request.referrer
-
-
-def back_click():
-    back_url = session['last_url']
-    session.pop('last_url', None)
-    if back_url is None:
-        return redirect(url_for('index'))
-    else:
-        return redirect(back_url)
 
 
 @tasks.route('/')
@@ -84,7 +70,7 @@ def users_tasks():
 
         page, page_index, count_pages, prev_page_index, next_page_index = paginate(users_and_tasks)
         return render_template('task/users_tasks.html', page=page, page_index=page_index, count_pages=count_pages,
-                           prev_page_index=prev_page_index, next_page_index=next_page_index)
+                               prev_page_index=prev_page_index, next_page_index=next_page_index)
     return redirect(url_for('tasks.index'))
 
 
@@ -93,10 +79,10 @@ def users_tasks():
 def preview(id):
     form = TaskForm()
 
-    add_session_back()
+    if not session.get('referrer', None):
+        session['referrer'] = request.referrer
 
-    if form.back_submit.data:
-        return back_click()
+    referrer = session['referrer']
 
     if current_user.superuser or current_user.can_review_tasks:
         task = Task.query.get(id)
@@ -113,7 +99,11 @@ def preview(id):
             db.session.add(user)
         db.session.delete(task)
         db.session.commit()
-        return back_click()
+        session.pop('referrer', None)
+        if referrer and referrer != request.referrer and referrer != url_for('tasks.results', id=id, _external=True):
+            return redirect(referrer)
+        else:
+            return redirect(url_for('index'))
 
     form.users.choices += db.session.query(User.id, User.username)\
         .filter(User.active.is_(True), User.superuser.is_(False))\
@@ -181,12 +171,6 @@ def preview(id):
 @tasks.route('results/<int:id>', methods=['GET', 'POST'])
 @login_required
 def results(id):
-    form = BackForm()
-
-    add_session_back()
-
-    if form.back_submit.data:
-        return back_click()
 
     if current_user.superuser or current_user.can_review_tasks:
         task = Task.query.get(id)
@@ -199,7 +183,7 @@ def results(id):
 
     page, page_index, count_pages, prev_page_index, next_page_index = paginate(task.task_results)
 
-    return render_template('task/results.html', id=id, form=form, page=page, page_index=page_index, count_pages=count_pages,
+    return render_template('task/results.html', id=id, page=page, page_index=page_index, count_pages=count_pages,
                            prev_page_index=prev_page_index, next_page_index=next_page_index)
 
 
@@ -222,11 +206,6 @@ def create():
         return redirect(url_for('tasks.index'))
 
     form = TaskForm()
-
-    add_session_back()
-
-    if form.back_submit.data:
-        return back_click()
 
     form.users.choices += db.session.query(User.id, User.username)\
         .filter(User.active.is_(True) & User.superuser.is_(False))\

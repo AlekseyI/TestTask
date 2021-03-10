@@ -9,7 +9,6 @@
 {% endblock %}
 
 {% block content %}
-
     {% with messages = get_flashed_messages(with_categories=True) %}
         {% for category, message in messages %}
             <div class="{{ category }}">{{ message }}</div>
@@ -17,25 +16,27 @@
     {% endwith %}
 
     <form action="" method="post">
-        {{ form.csrf_token() }}
+        {% if 'csrf_token' in form %}
+            {{ form.csrf_token() }}
+        {% endif %}
 
         {% if current_user.superuser %}
             <p>
                 {{ form.lower_limit.label() }}
                 {{ form.lower_limit() }}
                 {% if form.lower_limit.errors %}
-                {% for error in form.lower_limit.errors %}
-                {{ error }}
-                {% endfor %}
+                    {% for error in form.lower_limit.errors %}
+                        {{ error }}
+                    {% endfor %}
                 {% endif %}
             </p>
             <p>
                 {{ form.upper_limit.label() }}
                 {{ form.upper_limit() }}
                 {% if form.upper_limit.errors %}
-                {% for error in form.upper_limit.errors %}
-                {{ error }}
-                {% endfor %}
+                    {% for error in form.upper_limit.errors %}
+                        {{ error }}
+                    {% endfor %}
                 {% endif %}
             </p>
 
@@ -46,7 +47,7 @@
             <p>
                 {{ form.update_submit() }}
                 {{ form.delete_submit(formnovalidate=True) }}
-                {{ form.back_submit(formnovalidate=True) }}
+                <input type="button" value="Back" onclick="history.back(-1);" />
             </p>
         {% else %}
             <p>
@@ -58,7 +59,7 @@
                 {{ form.upper_limit(readonly=true) }}
             </p>
             <p>
-                {{ form.back_submit(formnovalidate=True) }}
+                <input type="button" value="Back" onclick="history.back(-1)" />
             </p>
         {% endif %}
     </form>

@@ -9,7 +9,6 @@
 {% endblock %}
 
 {% block content %}
-
     {% with messages = get_flashed_messages(with_categories=True) %}
         {% for category, message in messages %}
             <div class="{{ category }}">{{ message }}</div>
@@ -17,7 +16,9 @@
     {% endwith %}
 
     <form action="" method="post">
-        {{ form.csrf_token() }}
+        {% if 'csrf_token' in form %}
+            {{ form.csrf_token() }}
+        {% endif %}
         <p>
             {{ form.lower_limit.label() }}
             {{ form.lower_limit() }}
@@ -42,8 +43,7 @@
         </p>
         <p>
             {{ form.create_submit() }}
-            {{ form.back_submit(formnovalidate=True) }}
+            <input type="button" value="Back" onclick="history.back(-1)" />
         </p>
     </form>
-
 {% endblock %}

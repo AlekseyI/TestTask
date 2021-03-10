@@ -5,31 +5,28 @@
 {% endblock %}
 
 {% block content_title %}
-    Result Task_{{ id }}
+    <a href="{{ url_for('tasks.preview', id=id) }}">Result Task_{{ id }}</a>
 {% endblock %}
 
 {% block content %}
-    <form action="" method="post">
-        {{ form.csrf_token() }}
-        <hr />
-        {% for task_result in page.items %}
-            <p>
-                Result = {{ task_result.result }}
-            </p>
-            <p>
-                Time = {{ task_result.created_on }}
-            </p>
-            <hr />
-        {% endfor %}
-        {% if count_pages > 1 %}
-            <p>
-                <a href="{{ url_for('tasks.results', id=id, page=prev_page_index) }}">Back</a>
-                {{ page_index }} | {{ count_pages }}
-                <a href="{{ url_for('tasks.results', id=id, page=next_page_index) }}">Next</a>
-            </p>
-        {% endif %}
+    <hr/>
+    {% for task_result in page.items %}
         <p>
-            {{ form.back_submit(formnovalidate=True) }}
+            Result = {{ task_result.result }}
         </p>
-    </form>
+        <p>
+            Time = {{ task_result.created_on }}
+        </p>
+        <hr/>
+    {% endfor %}
+    {% if count_pages > 1 %}
+        <p>
+            <a href="{{ url_for('tasks.results', id=id, page=prev_page_index) }}">Back</a>
+            {{ page_index }} | {{ count_pages }}
+            <a href="{{ url_for('tasks.results', id=id, page=next_page_index) }}">Next</a>
+        </p>
+    {% endif %}
+    <p>
+        <input type="button" value="Back" onclick="history.back(-1)"/>
+    </p>
 {% endblock %}
